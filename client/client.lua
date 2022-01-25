@@ -13,7 +13,7 @@ Citizen.CreateThread(function()
 				local ped = nearPed(v.model, v.coords, v.heading, v.gender, v.scenario)
 				peds[k] = {ped = ped}
 			end
-			if dist >= 4.0 and peds[k] then
+			if dist >= 40.0 and peds[k] then
 				for i = 255, 0, -51 do
 					Citizen.Wait(50)
 					SetEntityAlpha(peds[k].ped, i, false)
