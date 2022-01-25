@@ -1,7 +1,7 @@
-name "Jim-Tequi-la-la"
+name "Jim-Chairs"
 author "Jimathy"
 version "v1.0"
-description "Tequi-la-la Job Script By Jimathy"
+description "Jim-Chairs By Jimathy"
 fx_version "cerulean"
 game "gta5"
 
@@ -10,7 +10,7 @@ client_scripts {
 }
 
 server_scripts {
-    'server/server.lua'
+    'server/*.lua'
 }
 
 shared_scripts {
