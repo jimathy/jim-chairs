@@ -1,112 +1,121 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-QBCore.Functions.CreateUseableItem("chair1", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair2", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair3", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair4", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair5", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair6", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair7", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair8", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair9", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair10", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair11", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair12", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair13", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair14", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair15", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair16", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair17", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair18", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair19", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair20", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair21", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair22", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair23", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair24", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair25", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair26", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair27", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair28", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair29", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair30", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair31", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair32", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair33", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair34", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair35", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair36", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair37", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair38", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair39", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair40", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair41", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair42", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair43", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair44", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair45", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair46", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair47", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair48", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair49", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair50", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair51", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair52", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair53", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair54", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair55", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair56", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair57", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair58", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair59", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair60", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair61", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair62", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair63", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair64", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair65", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair66", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair67", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair68", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair69", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair70", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair71", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair72", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair73", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair74", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair75", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair76", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair77", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair78", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair79", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair80", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair81", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair82", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair83", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair84", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair85", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair86", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair87", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair88", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair89", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair90", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair91", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair92", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair93", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair94", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair95", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair96", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair97", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair98", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair99", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair100", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair101", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair102", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair103", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair104", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair105", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair106", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair107", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair108", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair109", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
-QBCore.Functions.CreateUseableItem("chair110", function(source, item) TriggerClientEvent("jim-chairs:Use", source, item.name) end)
+local chair = {
+  'chair1',
+  'chair2',
+  'chair3',
+  'chair4',
+  'chair5',
+  'chair6',
+  'chair7',
+  'chair8',
+  'chair9',
+  'chair10',
+  'chair11',
+  'chair12',
+  'chair13',
+  'chair14',
+  'chair15',
+  'chair16',
+  'chair17',
+  'chair18',
+  'chair19',
+  'chair20',
+  'chair21',
+  'chair22',
+  'chair23',
+  'chair24',
+  'chair25',
+  'chair26',
+  'chair27',
+  'chair28',
+  'chair29',
+  'chair30',
+  'chair31',
+  'chair32',
+  'chair33',
+  'chair34',
+  'chair35',
+  'chair36',
+  'chair37',
+  'chair38',
+  'chair39',
+  'chair40',
+  'chair41',
+  'chair42',
+  'chair43',
+  'chair44',
+  'chair45',
+  'chair46',
+  'chair47',
+  'chair48',
+  'chair49',
+  'chair50',
+  'chair51',
+  'chair52',
+  'chair53',
+  'chair54',
+  'chair55',
+  'chair56',
+  'chair57',
+  'chair58',
+  'chair59',
+  'chair60',
+  'chair61',
+  'chair62',
+  'chair63',
+  'chair64',
+  'chair67',
+  'chair68',
+  'chair69',
+  'chair70',
+  'chair71',
+  'chair72',
+  'chair73',
+  'chair74',
+  'chair75',
+  'chair76',
+  'chair77',
+  'chair78',
+  'chair79',
+  'chair80',
+  'chair81',
+  'chair82',
+  'chair83',
+  'chair84',
+  'chair85',
+  'chair86',
+  'chair87',
+  'chair88',
+  'chair89',
+  'chair90',
+  'chair91',
+  'chair92',
+  'chair93',
+  'chair94',
+  'chair95',
+  'chair96',
+  'chair97',
+  'chair98',
+  'chair99',
+  'chair100',
+  'chair101',
+  'chair102',
+  'chair103',
+  'chair104',
+  'chair105',
+  'chair106',
+  'chair107',
+  'chair108',
+  'chair109',
+  'chair110',
+}
+
+
+CreateThread(function()
+    for k,v in pairs(chair) do
+       QBCore.Functions.CreateUseableItem(v, function(source, item)
+           TriggerClientEvent('jim-chairs:Use', sourcem item.name)
+       end)
+    end
+end)
