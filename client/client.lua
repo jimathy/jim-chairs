@@ -71,7 +71,7 @@ RegisterNetEvent("jim-chairs:Use", function(item)
 	if not haschairalready then
 		haschairalready = true
 	if Config.Debug then print("Distance from floor: "..GetEntityHeightAboveGround(PlayerPedId())) end
-	if GetEntityHeightAboveGround(PlayerPedId()) >= 1.1 then return end
+	if GetEntityHeightAboveGround(PlayerPedId()) >= tonumber(Config.ExploitDistance) then return end
 	local coords = GetEntityCoords(PlayerPedId())
 	local animDict = "timetable@ron@ig_3_couch"
 	local animation = "base"
