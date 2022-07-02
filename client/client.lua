@@ -1,5 +1,4 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-
 local Targets = {}
 local Peds = {}
 local Blips = {}
@@ -13,7 +12,7 @@ CreateThread(function()
 		SetEntityInvincible(Peds[#Peds], true)
 		SetBlockingOfNonTemporaryEvents(Peds[#Peds], true)
 		FreezeEntityPosition(Peds[#Peds], true)
-	
+
 		if Config.BlipEnable then 
 			if Config.Debug then print("Creating Map Blip for store: ['"..v.label.."']") end
 			Blips[#Blips+1] = AddBlipForCoord(v.coords)
@@ -39,7 +38,7 @@ end)
 RegisterNetEvent('jim-chairs:openShop', function(data)
 	if Config.JimShops then 
 		TriggerServerEvent("jim-shops:ShopOpen", "shop", "Chairs", data.store)
-	else 
+	else
 		TriggerServerEvent("inventory:server:OpenInventory", "shop", "Chairs", data.store)
 	end
 end)
@@ -68,15 +67,14 @@ function loadAnimDict(dict)
 end
 
 RegisterNetEvent("jim-chairs:Use", function(item)
+	if not IsPedInAnyVehicle(PlayerPedId(), false) then TriggerEvent("QBCore:Notify", "You can't use this while in a car", "error") return end
 	if not haschairalready then
 		haschairalready = true
 	if Config.Debug then print("Distance from floor: "..GetEntityHeightAboveGround(PlayerPedId())) end
 	if GetEntityHeightAboveGround(PlayerPedId()) >= tonumber(Config.ExploitDistance) then return end
-	local coords = GetEntityCoords(PlayerPedId())
 	local animDict = "timetable@ron@ig_3_couch"
 	local animation = "base"
 	FreezeEntityPosition(PlayerPedId(), true)
-
 	if item == "chair1" then attachAChair(`v_corp_bk_chair1`, 0, 0, -0.2, -0.22, 8.4, -0.2, 190.0)
 	elseif item == "chair2" then attachAChair(`v_corp_bk_chair2`, 0, 0, 0.0, -0.12, 5.4, 0.4, 190.0)
 	elseif item == "chair3" then attachAChair(`v_corp_lazychair`, 0, 0, -0.1, -0.55, 12.4, 0.4, 190.0)
@@ -150,7 +148,6 @@ RegisterNetEvent("jim-chairs:Use", function(item)
 	elseif item == "chair70" then attachAChair(`apa_mp_h_din_chair_12`, 0, 0, -0.1, -0.62, 8.4, 0.4, 185.0)
 	elseif item == "chair71" then attachAChair(`apa_mp_h_stn_chairarm_01`, 0, 0, -0.25, -0.58, 8.4, -1.4, 185.0)
 	elseif item == "chair72" then attachAChair(`apa_mp_h_stn_chairarm_02`, 0, 0, -0.60, -0.48, 8.4, -1.4, 185.0)
-	
 	elseif item == "chair73" then attachAChair(`apa_mp_h_stn_chairarm_03`, 0, 0, -0.40, -0.52, 8.4, -1.4, 185.0)
 	elseif item == "chair74" then attachAChair(`apa_mp_h_stn_chairarm_09`, 0, 0, -0.40, -0.53, 8.4, -1.4, 185.0)
 	elseif item == "chair75" then attachAChair(`apa_mp_h_stn_chairarm_11`, 0, 0, -0.35, -0.53, 8.4, -1.4, 185.0)
@@ -158,7 +155,7 @@ RegisterNetEvent("jim-chairs:Use", function(item)
 	elseif item == "chair77" then attachAChair(`apa_mp_h_stn_chairarm_13`, 0, 0, -0.60, -0.48, 8.4, -1.4, 185.0)
 	elseif item == "chair78" then attachAChair(`apa_mp_h_stn_chairarm_23`, 0, 0, -0.15, -0.55, 8.4, -1.4, 185.0)
 	elseif item == "chair79" then attachAChair(`apa_mp_h_stn_chairarm_24`, 0, 0, -0.55, -0.53, 8.4, -1.4, 185.0)
-	elseif item == "chair80" then attachAChair(`apa_mp_h_stn_chairarm_25`, 0, 0, -0.25, -0.55, 8.4, -1.4, 185.0)	
+	elseif item == "chair80" then attachAChair(`apa_mp_h_stn_chairarm_25`, 0, 0, -0.25, -0.55, 8.4, -1.4, 185.0)
 	elseif item == "chair81" then attachAChair(`apa_mp_h_stn_chairarm_26`, 0, 0, -0.70, -0.50, 8.4, -1.4, 185.0)
 	elseif item == "chair82" then attachAChair(`apa_mp_h_stn_chairstool_12`, 0, 0, -0.1, -0.55, 8.4, -1.4, 185.0)
 	elseif item == "chair83" then attachAChair(`apa_mp_h_stn_chairstrip_01`, 0, 0, -0.25, -0.55, 8.4, -1.4, 185.0)
