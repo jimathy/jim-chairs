@@ -67,7 +67,7 @@ function loadAnimDict(dict)
 end
 
 RegisterNetEvent("jim-chairs:Use", function(item)
-	if not IsPedInAnyVehicle(PlayerPedId(), false) then TriggerEvent("QBCore:Notify", "You can't use this while in a car", "error") return end
+	if IsPedInAnyVehicle(PlayerPedId(), false) then TriggerEvent("QBCore:Notify", "You can't use this while in a car", "error") return end
 	if not haschairalready then
 		haschairalready = true
 	if Config.Debug then print("Distance from floor: "..GetEntityHeightAboveGround(PlayerPedId())) end
