@@ -7,7 +7,7 @@ print("Jim-Chairs v1.1 - Portable Chair Script by Jimathy")
 
 
 Config = {
-	Debug = true, 	 -- Enable this to help debug the script
+	Debug = false, 	 -- Enable this to help debug the script
 	JimShops = false, -- Set to true if using jim-shops
 
 	ExploitDistance = 1.2,  -- Default '1.2'.
