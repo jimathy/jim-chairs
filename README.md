@@ -21,6 +21,7 @@ THESE GO IN YOUR SHARED.LUA IN qb-core:
 
 Under the QBShared.Items = {
 
+```lua
 	["chair1"] 						= {["name"] = "chair1",  	    			["label"] = "Black Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair1.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
 	["chair2"] 						= {["name"] = "chair2",  	    			["label"] = "Wood Lounger",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair2.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
 	["chair3"] 						= {["name"] = "chair3",  	    			["label"] = "Metal Deco Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair3.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
@@ -131,3 +132,4 @@ Under the QBShared.Items = {
 	["chair108"] 					= {["name"] = "chair108",  	    			["label"] = "White Casino Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair108.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
 	["chair109"] 					= {["name"] = "chair109",  	    			["label"] = "Cream Wicker Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair109.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
 	["chair110"] 					= {["name"] = "chair110",  	    			["label"] = "Black Metal Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair110.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
+```
