@@ -10,6 +10,7 @@ function unloadAnimDict(dict) if Config.Debug then print("Debug: Removing Anim D
 function loadModel(model) if Config.Debug then print("Debug: Loading Model: '"..model.."'") end RequestModel(model) while not HasModelLoaded(model) do Wait(0) end end
 function unloadModel(model) if Config.Debug then print("Debug: Removing Model: '"..model.."'") end SetModelAsNoLongerNeeded(model) end
 function destroyProp(entity) if Config.Debug then print("Debug: Destroying Prop: '"..entity.."'") end SetModelAsNoLongerNeeded(GetEntityModel(entity)) SetEntityAsMissionEntity(entity) Wait(5) DetachEntity(entity, true, true) Wait(5) DeleteObject(entity) end
+function conVector3(vector4) return vector3(vector4.x, vector4.y, vector4.z) end
 
 CreateThread(function()
 	if Config.MakeStores then
@@ -35,7 +36,7 @@ CreateThread(function()
 			end
 			if Config.Debug then print("Creating Ped for store: ['"..v.label.."']") end
 			Targets["ChairStore"..k] =
-			exports['qb-target']:AddCircleZone("ChairStore"..k, v.info.coords, 1.2, { name="ChairStore"..k, debugPoly=Config.Debug, useZ=true, },
+			exports['qb-target']:AddCircleZone("ChairStore"..k, conVector3(v.info.coords), 1.2, { name="ChairStore"..k, debugPoly=Config.Debug, useZ=true, },
 			{ options = { { event = "jim-chairs:openShop", icon = "fas fa-chair", label = "Browse Store", store = v }, },
 				distance = 2.0
 			})
@@ -45,10 +46,8 @@ end)
 
 --Chair Store Opening
 RegisterNetEvent('jim-chairs:openShop', function(data)
-	if Config.JimShops then
-		TriggerServerEvent("jim-shops:ShopOpen", "shop", "Chairs", data.store)
-	else
-		TriggerServerEvent("inventory:server:OpenInventory", "shop", "Chairs", data.store)
+	if Config.JimShops then	TriggerServerEvent("jim-shops:ShopOpen", "shop", "Chairs", data.store)
+	else TriggerServerEvent("inventory:server:OpenInventory", "shop", "Chairs", data.store)
 	end
 end)
 
