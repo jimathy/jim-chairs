@@ -1,135 +1,225 @@
-# jim-chairs
-QBCore Based Portable Chair Script
+local QBCore = exports['qb-core']:GetCoreObject()
+local Targets = {}
+local Peds = {}
+local Blips = {}
+local attachedChair = nil
 
-I hope you have fun with this script and that it brings RP to your server
+--Custom Events
+function loadAnimDict(dict) if Config.Debug then print("Debug: Loading Anim Dictionary: '"..dict.."'") end while not HasAnimDictLoaded(dict) do RequestAnimDict(dict) Wait(0) end end
+function unloadAnimDict(dict) if Config.Debug then print("Debug: Removing Anim Dictionary: '"..dict.."'") end RemoveAnimDict(dict) end
+function loadModel(model) if Config.Debug then print("Debug: Loading Model: '"..model.."'") end RequestModel(model) while not HasModelLoaded(model) do Wait(0) end end
+function unloadModel(model) if Config.Debug then print("Debug: Removing Model: '"..model.."'") end SetModelAsNoLongerNeeded(model) end
+function destroyProp(entity) if Config.Debug then print("Debug: Destroying Prop: '"..entity.."'") end SetModelAsNoLongerNeeded(GetEntityModel(entity)) SetEntityAsMissionEntity(entity) Wait(5) DetachEntity(entity, true, true) Wait(5) DeleteObject(entity) end
+function conVector3(vector4) return vector3(vector4.x, vector4.y, vector4.z) end
 
-If you need support I now have a discord available, it helps me keep track of issues and give better support.
+CreateThread(function()
+	if Config.MakeStores then
+		for k, v in pairs(Config.Stores) do
+			if Config.Debug then print("Creating Ped for store: ['"..v.label.."']") end
+			loadModel(v.info.ped.model)
+			Peds[#Peds+1] = CreatePed(5, v.info.ped.model, v.info.coords.x, v.info.coords.y, v.info.coords.z-1.03, v.info.coords[4], false, true)
+			SetEntityInvincible(Peds[#Peds], true)
+			SetBlockingOfNonTemporaryEvents(Peds[#Peds], true)
+			FreezeEntityPosition(Peds[#Peds], true)
 
-https://discord.gg/xKgQZ6wZvS
+			if v.info.showBlip then
+				if Config.Debug then print("Creating Map Blip for store: ['"..v.label.."']") end
+				Blips[#Blips+1] = AddBlipForCoord(v.info.coords)
+				SetBlipAsShortRange(Blips[#Blips], true)
+				SetBlipSprite(Blips[#Blips], 478)
+				SetBlipColour(Blips[#Blips], 81)
+				SetBlipScale(Blips[#Blips], 0.7)
+				SetBlipDisplay(Blips[#Blips], 6)
+				BeginTextCommandSetBlipName('STRING')
+				AddTextComponentString("Chair Store")
+				EndTextCommandSetBlipName(Blips[#Blips])
+			end
+			if Config.Debug then print("Creating Ped for store: ['"..v.label.."']") end
+			Targets["ChairStore"..k] =
+			exports['qb-target']:AddCircleZone("ChairStore"..k, conVector3(v.info.coords), 1.2, { name="ChairStore"..k, debugPoly=Config.Debug, useZ=true, },
+			{ options = { { event = "jim-chairs:openShop", icon = "fas fa-chair", label = "Browse Store", store = v }, },
+				distance = 2.0
+			})
+		end
+	end
+end)
 
--------------------------------------------------------------------------------------------------
+--Chair Store Opening
+RegisterNetEvent('jim-chairs:openShop', function(data)
+	if Config.JimShops then	TriggerServerEvent("jim-shops:ShopOpen", "shop", "Chairs", data.store)
+	else TriggerServerEvent("inventory:server:OpenInventory", "shop", "Chairs", data.store)
+	end
+end)
 
-INSTALLATION
 
-Add the item images to your inventory script
+--CHAIR CONTROLLERS
+function attachAChair(chairModel, x, y, z, xR, yR, zR)
+	removeattachedChair()
+	loadModel(chairModel)
+	attachedChair = CreateObject(chairModel, 1.0, 1.0, 1.0, 1, 1, 0)
+	AttachEntityToEntity(attachedChair, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 0), x, y, z, xR, yR, zR, 1, 1, 0, 0, 2, 1)
+end
+function removeattachedChair()
+	if attachedChair then
+		unloadModel(GetEntityModel(attachedChair))
+		destroyProp(attachedChair)
+		attachedChair = nil
+	end
+end
+RegisterNetEvent("jim-chairs:Use", function(item)
+	if IsPedInAnyVehicle(PlayerPedId(), false) then TriggerEvent("QBCore:Notify", "You can't use this while in a car", "error") return end
+	local dict = "timetable@ron@ig_3_couch"
+	local anim = "base"
+	if not haschairalready then
+		haschairalready = true
+		if Config.Debug then print("Distance from floor: "..GetEntityHeightAboveGround(PlayerPedId())) end
+		if GetEntityHeightAboveGround(PlayerPedId()) >= tonumber(Config.ExploitDistance) then return end
 
-[qb] > qb-inventory > html > images
+		FreezeEntityPosition(PlayerPedId(), true)
+		if item == "chair1" then attachAChair(`v_corp_bk_chair1`, 0, -0.2, -0.22, 8.4, -0.2, 190.0)
+		elseif item == "chair2" then attachAChair(`v_corp_bk_chair2`, 0, 0.0, -0.12, 5.4, 0.4, 190.0)
+		elseif item == "chair3" then attachAChair(`v_corp_lazychair`, 0, -0.1, -0.55, 12.4, 0.4, 190.0)
+		elseif item == "chair4" then attachAChair(`v_corp_lazychairfd`, 0, -0.1, -0.55, 12.4, 0.4, 190.0)
+		elseif item == "chair5" then attachAChair(`v_corp_offchairfd`, 0, 0.0, -0.52, 3.4, 0.4, 180.0)
+		elseif item == "chair6" then attachAChair(`v_corp_sidechair`, 0, -0.1, -0.62, 10.4, 0.4, 180.0)
+		elseif item == "chair7" then attachAChair(`v_ilev_m_dinechair`, 0, -0.1, -0.58, 8.4, 0.4, 180.0)
+		elseif item == "chair8" then attachAChair(`v_res_d_armchair`, 0, -0.2, -0.12, 8.4, 0.4, 180.0)
+		elseif item == "chair9" then attachAChair(`v_res_fa_chair01`, 0, -0.15, -0.35, 8.4, 0.4, 190.0)
+		elseif item == "chair10" then attachAChair(`v_res_fh_barcchair`, 0, -0.15, -0.56, 10.4, 0.4, 180.0)
+		elseif item == "chair11" then attachAChair(`v_res_fh_easychair`, 0, -0.15, -0.56, 10.4, 0.4, 180.0)
+		elseif item == "chair12" then attachAChair(`v_res_j_dinechair`, 0, -0.15, -0.56, 10.4, 0.4, 180.0)
+		elseif item == "chair13" then attachAChair(`v_res_jarmchair`, 0, -0.15, -0.56, 10.4, 0.4, 180.0)
+		elseif item == "chair14" then attachAChair(`v_res_m_armchair`, 0, -0.25, -0.56, 8.4, 0.4, 190.0)
+		elseif item == "chair15" then attachAChair(`v_res_m_dinechair`, 0, -0.15, -0.56, 8.4, 0.4, 180.0)
+		elseif item == "chair16" then attachAChair(`v_res_mbchair`, 0, -0.15, -0.56, 8.4, 0.4, 180.0)
+		elseif item == "chair17" then attachAChair(`v_res_mp_stripchair`, 0, -0.15, -0.56, 8.4, 0.4, 185.0)
+		elseif item == "chair18" then attachAChair(`v_res_study_chair`, 0, -0.05, -0.56, 8.4, 0.4, 185.0)
+		elseif item == "chair19" then attachAChair(`v_res_tre_chair`, 0, 0.0, -0.18, 8.4, 0.4, 180.0)
+		elseif item == "chair20" then attachAChair(`v_res_tre_officechair`, 0, 0.0, -0.12, 8.4, 0.4, 185.0)
+		elseif item == "chair21" then attachAChair(`v_res_trev_framechair`, 0, -0.18, -0.62, 8.4, 0.4, 185.0)
+		elseif item == "chair22" then attachAChair(`v_ret_chair`, 0, -0.12, -0.58, 10.4, 0.4, 185.0)
+		elseif item == "chair23" then attachAChair(`v_ret_chair_white`, 0, -0.12, -0.58, 10.4, 0.4, 185.0)
+		elseif item == "chair24" then attachAChair(`v_ret_fh_chair01`, 0, -0.12, -0.42, 8.4, 0.4, 185.0)
+		elseif item == "chair25" then attachAChair(`v_ret_gc_chair02`, 0, 0.0, -0.12, 10.4, 0.4, 180.0)
+		elseif item == "chair26" then attachAChair(`v_serv_ct_chair02`, 0, 0.0, -0.035, 10.4, 0.4, 180.0)
+		elseif item == "chair27" then attachAChair(`prop_off_chair_01`, 0, 0.0, -0.58, 8.4, 0.4, 180.0)
+		elseif item == "chair28" then attachAChair(`prop_off_chair_03`, 0, 0.0, -0.58, 8.4, 0.4, 185.0)
+		elseif item == "chair29" then attachAChair(`prop_off_chair_04`, 0, 0.0, -0.52, 8.4, 0.4, 185.0)
+		elseif item == "chair30" then attachAChair(`prop_off_chair_04b`, 0, -0.1, -0.52, 8.4, 0.4, 185.0)
+		elseif item == "chair31" then attachAChair(`prop_off_chair_05`, 0, 0.0, -0.52, 9.4, 0.4, 185.0)
+		elseif item == "chair32" then attachAChair(`prop_sol_chair`, 0, -0.1, -0.605, 8.4, 0.4, 185.0)
+		elseif item == "chair33" then attachAChair(`v_club_officechair`, 0, 0.0, -0.58, 9.4, 0.4, 185.0)
+		elseif item == "chair34" then attachAChair(`v_corp_cd_chair`, 0, 0.0, -0.62, 8.4, 0.4, 185.0)
+		elseif item == "chair35" then attachAChair(`v_corp_offchair`, 0, 0.0, -0.52, 8.4, 0.4, 185.0)
+		elseif item == "chair36" then attachAChair(`v_ret_gc_chair03`, 0, 0.0, 0.12, 9.4, 0.4, 185.0)
+		elseif item == "chair37" then attachAChair(`prop_cs_office_chair`, 0, -0.05, -0.58, 9.4, 0.4, 185.0)
+		elseif item == "chair38" then attachAChair(`prop_rock_chair_01`, 0, 0.0, -0.18, 8.4, 0.4, 185.0)
+		elseif item == "chair39" then attachAChair(`p_yacht_chair_01_s`, 0, -0.2, -0.02, 9.4, 0.4, 180.0)
+		elseif item == "chair40" then attachAChair(`p_armchair_01_s`, 0, -0.2, -0.55, 9.4, 0.4, 185.0)
+		elseif item == "chair41" then attachAChair(`prop_chair_01a`, 0, -0.15, -0.55, 8.4, 0.4, 185.0)
+		elseif item == "chair42" then attachAChair(`prop_chair_01b`, 0, -0.15, -0.62, 8.4, 0.4, 185.0)
+		elseif item == "chair43" then attachAChair(`prop_chair_02`, 0, -0.15, -0.62, 8.4, 0.4, 185.0)
+		elseif item == "chair44" then attachAChair(`prop_chair_03`, 0, -0.15, -0.62, 8.4, 0.4, 185.0)
+		elseif item == "chair45" then attachAChair(`prop_chair_04a`, 0, -0.15, -0.62, 8.4, 0.4, 185.0)
+		elseif item == "chair46" then attachAChair(`prop_chair_04b`, 0, -0.15, -0.62, 8.4, 0.4, 185.0)
+		elseif item == "chair47" then attachAChair(`prop_chair_05`, 0, -0.15, -0.58, 8.4, 0.4, 185.0)
+		elseif item == "chair48" then attachAChair(`prop_chair_06`, 0, -0.15, -0.58, 8.4, 0.4, 185.0)
+		elseif item == "chair49" then attachAChair(`prop_chair_07`, 0, -0.05, -0.58, 8.4, 0.4, 185.0)
+		elseif item == "chair50" then attachAChair(`prop_chair_08`, 0, 0.0, -0.1, 8.4, 0.4, 185.0)
+		elseif item == "chair51" then attachAChair(`prop_chair_09`, 0, -0.15, -0.58, 8.4, 0.4, 185.0)
+		elseif item == "chair52" then attachAChair(`prop_chair_10`, 0, -0.15, -0.58, 8.4, 0.4, 185.0)
+		elseif item == "chair53" then attachAChair(`prop_chateau_chair_01`, 0, -0.0, -0.1, 8.4, 0.4, 185.0)
+		elseif item == "chair54" then attachAChair(`prop_old_wood_chair`, 0, 0.0, -0.22, 3.4, 0.4, 180.0)
+		elseif item == "chair55" then attachAChair(`v_club_barchair`, 0, -0.05, -0.52, 9.4, 0.4, 180.0)
+		elseif item == "chair56" then attachAChair(`v_club_ch_armchair`, 0, -0.25, -0.55, 9.4, 0.4, 180.0)
+		elseif item == "chair57" then attachAChair(`v_club_stagechair`, 0, -0.25, -0.55, 9.4, 0.4, 180.0)
+		elseif item == "chair58" then attachAChair(`v_club_vuarmchair`, 0, -0.25, -0.55, 9.4, 0.4, 180.0)
+		elseif item == "chair59" then attachAChair(`v_med_fabricchair1`, 0, -0.1, -0.12, 9.4, 0.4, 180.0)
+		elseif item == "chair60" then attachAChair(`v_med_p_deskchair`, 0, -0.05, -0.55, 9.4, 0.4, 180.0)
+		elseif item == "chair61" then attachAChair(`v_med_whickerchair1`, 0, -0.05, -0.12, 9.4, 0.4, 180.0)
+		elseif item == "chair62" then attachAChair(`prop_skid_chair_01`, 0, -0.05, -0.18, 8.4, 0.4, 185.0)
+		elseif item == "chair63" then attachAChair(`prop_skid_chair_02`, 0, -0.05, -0.18, 8.4, 0.4, 185.0)
+		elseif item == "chair64" then attachAChair(`prop_skid_chair_03`, 0, -0.05, -0.18, 8.4, 0.4, 185.0)
+		elseif item == "chair65" then attachAChair(`prop_armchair_01`, 0, -0.2, -0.58, 7.4, 0.4, 185.0)
+		elseif item == "chair66" then attachAChair(`prop_yaught_chair_01`, 0, -0.2, -0.02, 9.4, 0.4, 185.0)
+		--MPAPARTMENT
+		elseif item == "chair67" then attachAChair(`apa_mp_h_din_chair_04`, 0, -0.1, -0.60, 9.4, 0.4, 185.0)
+		elseif item == "chair68" then attachAChair(`apa_mp_h_din_chair_08`, 0, -0.1, -0.60, 9.4, 0.4, 185.0)
+		elseif item == "chair69" then attachAChair(`apa_mp_h_din_chair_09`, 0, 0.1, -0.60, 9.4, 0.4, 185.0)
+		elseif item == "chair70" then attachAChair(`apa_mp_h_din_chair_12`, 0, -0.1, -0.62, 8.4, 0.4, 185.0)
+		elseif item == "chair71" then attachAChair(`apa_mp_h_stn_chairarm_01`, 0, -0.25, -0.58, 8.4, -1.4, 185.0)
+		elseif item == "chair72" then attachAChair(`apa_mp_h_stn_chairarm_02`, 0, -0.60, -0.48, 8.4, -1.4, 185.0)
+		elseif item == "chair73" then attachAChair(`apa_mp_h_stn_chairarm_03`, 0, -0.40, -0.52, 8.4, -1.4, 185.0)
+		elseif item == "chair74" then attachAChair(`apa_mp_h_stn_chairarm_09`, 0, -0.40, -0.53, 8.4, -1.4, 185.0)
+		elseif item == "chair75" then attachAChair(`apa_mp_h_stn_chairarm_11`, 0, -0.35, -0.53, 8.4, -1.4, 185.0)
+		elseif item == "chair76" then attachAChair(`apa_mp_h_stn_chairarm_12`, 0, -0.15, -0.56, 8.4, -1.4, 185.0)
+		elseif item == "chair77" then attachAChair(`apa_mp_h_stn_chairarm_13`, 0, -0.60, -0.48, 8.4, -1.4, 185.0)
+		elseif item == "chair78" then attachAChair(`apa_mp_h_stn_chairarm_23`, 0, -0.15, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair79" then attachAChair(`apa_mp_h_stn_chairarm_24`, 0, -0.55, -0.53, 8.4, -1.4, 185.0)
+		elseif item == "chair80" then attachAChair(`apa_mp_h_stn_chairarm_25`, 0, -0.25, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair81" then attachAChair(`apa_mp_h_stn_chairarm_26`, 0, -0.70, -0.50, 8.4, -1.4, 185.0)
+		elseif item == "chair82" then attachAChair(`apa_mp_h_stn_chairstool_12`, 0, -0.1, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair83" then attachAChair(`apa_mp_h_stn_chairstrip_01`, 0, -0.25, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair84" then attachAChair(`apa_mp_h_stn_chairstrip_02`, 0, -0.15, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair85" then attachAChair(`apa_mp_h_stn_chairstrip_03`, 0, -0.15, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair86" then attachAChair(`apa_mp_h_stn_chairstrip_04`, 0, -0.15, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair87" then attachAChair(`apa_mp_h_stn_chairstrip_05`, 0, -0.15, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair88" then attachAChair(`apa_mp_h_stn_chairstrip_07`, 0, -0.15, -0.58, 8.4, -1.4, 185.0)
+		elseif item == "chair89" then attachAChair(`apa_mp_h_stn_chairstrip_08`, 0, -0.15, -0.58, 8.4, -1.4, 185.0)
+		elseif item == "chair90" then attachAChair(`apa_mp_h_yacht_armchair_01`, 0, -0.25, -0.58, 8.4, -1.4, 185.0)
+		elseif item == "chair91" then attachAChair(`apa_mp_h_yacht_armchair_03`, 0, -0.20, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair92" then attachAChair(`apa_mp_h_yacht_armchair_04`, 0, -0.25, -0.58, 8.4, -1.4, 185.0)
+		--MPBATTLE
+		elseif item == "chair93" then attachAChair(`ba_prop_battle_club_chair_02`, 0, -0.15, 0.05, 7.4, -1.4, 185.0)
+		elseif item == "chair94" then attachAChair(`ba_prop_battle_club_chair_03`, 0, -0.05, 0.05, 9.4, 0.4, 185.0)
+		--MPBIKER
+		elseif item == "chair95" then attachAChair(`bkr_prop_biker_chairstrip_01`, 0, -0.20, -0.55, 8.4, -1.4, 185.0)
+		elseif item == "chair96" then attachAChair(`bkr_prop_weed_chair_01a`, 0, -0.10, -0.58, 8.4, -1.4, 185.0)
+		elseif item == "chair97" then attachAChair(`bkr_prop_clubhouse_chair_03`, 0, -0.10, -0.55, 8.4, -1.4, 185.0)
+		--MPCHRISTMAS2017
+		elseif item == "chair98" then attachAChair(`xm_prop_x17_avengerchair`, 0, 0.0, 0.02, 9.4, -1.4, 185.0)
+		elseif item == "chair99" then attachAChair(`xm_prop_x17_avengerchair_02`, 0, -0.05, 0.05, 9.4, -1.4, 185.0)
+		elseif item == "chair100" then attachAChair(`xm_int_lev_sub_chair_01`, 0, -0.05, -0.58, 8.4, -1.4, 185.0)
+		elseif item == "chair101" then attachAChair(`xm_lab_chairarm_26`, 0, -0.68, -0.52, 8.4, -1.4, 185.0)
+		--MPHEIST
+		elseif item == "chair102" then attachAChair(`hei_heist_din_chair_02`, 0, -0.05, -0.58, 9.4, -1.4, 185.0)
+		elseif item == "chair103" then attachAChair(`hei_heist_din_chair_01`, 0, -0.05, -0.62, 9.4, -1.4, 185.0)
+		elseif item == "chair104" then attachAChair(`hei_heist_din_chair_06`, 0, -0.05, -0.62, 9.4, -1.4, 185.0)
+		elseif item == "chair105" then attachAChair(`hei_heist_din_chair_09`, 0, -0.15, -0.58, 9.4, -1.4, 185.0)
+		elseif item == "chair106" then attachAChair(`hei_heist_stn_chairarm_06`, 0, -0.05, -0.55, 7.4, -1.4, 185.0)
+		elseif item == "chair107" then attachAChair(`hei_heist_stn_chairstrip_01`, 0, -0.05, -0.55, 7.4, -1.4, 185.0)
+		--MPHEIST3
+		elseif item == "chair108" then attachAChair(`ch_prop_casino_track_chair_01`, 0, -0.05, -0.58, 8.4, -1.4, 185.0)
+		--MPHEIST4
+		elseif item == "chair109" then attachAChair(`h4_prop_h4_chair_01a`, 0, -0.15, -0.02, 9.4, -1.4, 185.0)
+		--MPTUNER
+		elseif item == "chair110" then attachAChair(`tr_prop_tr_chair_01a`, 0, -0.1, 0.02, 9.4, -1.4, 185.0) end
+		loadAnimDict(dict)
+		TaskPlayAnim(PlayerPedId(), dict, anim, 1.0, 4.0, GetAnimDuration(dict, anim), 1, 0, 0, 0, 0)
+	else
+		haschairalready = false
+		FreezeEntityPosition(PlayerPedId(),false)
+		removeattachedChair()
+		StopEntityAnim(PlayerPedId(), anim, dict, 3)
+		unloadAnimDict(dict)
+	end
+end)
 
--------------------------------------------------------------------------------------------------
+CreateThread(function()
+	while true do
+		if haschairalready and not IsEntityPlayingAnim(PlayerPedId(), "timetable@ron@ig_3_couch", "base", 3) then
+			FreezeEntityPosition(PlayerPedId(),false)
+			removeattachedChair()
+			haschairalready = false
+		end
+		Wait(2000)
+	end
+end)
 
-THESE GO IN YOUR SHARED.LUA IN qb-core:
-
-Under the QBShared.Items = {
-
-```lua
-	["chair1"] 						= {["name"] = "chair1",  	    			["label"] = "Black Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair1.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair2"] 						= {["name"] = "chair2",  	    			["label"] = "Wood Lounger",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair2.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair3"] 						= {["name"] = "chair3",  	    			["label"] = "Metal Deco Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair3.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair4"] 						= {["name"] = "chair4",  	    			["label"] = "Old Metal Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair4.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair5"] 						= {["name"] = "chair5",  	    			["label"] = "Old Office Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair5.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair6"] 						= {["name"] = "chair6",  	    			["label"] = "Grey Dining Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair6.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair7"] 						= {["name"] = "chair7",  	    			["label"] = "Fancy Dining Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair7.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair8"] 						= {["name"] = "chair8",  	    			["label"] = "Lime Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair8.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair9"] 						= {["name"] = "chair9",  	    			["label"] = "Standard Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair9.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair10"] 					= {["name"] = "chair10",  	    			["label"] = "Black Office Couch",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair10.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair11"] 					= {["name"] = "chair11",  	    			["label"] = "Black Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair11.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair12"] 					= {["name"] = "chair12",  	    			["label"] = "Used Brown Office Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair12.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair13"] 					= {["name"] = "chair13",  	    			["label"] = "Orange Leather Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair13.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair14"] 					= {["name"] = "chair14",  	    			["label"] = "White Leather Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair14.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair15"] 					= {["name"] = "chair15",  	    			["label"] = "Old Dining Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair15.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair16"] 					= {["name"] = "chair16",  	    			["label"] = "White Dining Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair16.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair17"] 					= {["name"] = "chair17",  	    			["label"] = "Green Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair17.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair18"] 					= {["name"] = "chair18",  	    			["label"] = "Blue Dining Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair18.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair19"] 					= {["name"] = "chair19",  	    			["label"] = "White Dining Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair19.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair20"] 					= {["name"] = "chair20",  	    			["label"] = "Blue Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair20.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair21"] 					= {["name"] = "chair21",  	    			["label"] = "Metal Lawn Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair21.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair22"] 					= {["name"] = "chair22",  	    			["label"] = "Posh Dining Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair22.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair23"] 					= {["name"] = "chair23",  	    			["label"] = "Posh White Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair23.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair24"] 					= {["name"] = "chair24",  	    			["label"] = "Old White Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair24.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair25"] 					= {["name"] = "chair25",  	    			["label"] = "Red Plastic Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair25.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair26"] 					= {["name"] = "chair26",  	    			["label"] = "Blue Plastic Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair26.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair27"] 					= {["name"] = "chair27",  	    			["label"] = "Black Leather Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair27.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair28"] 					= {["name"] = "chair28",  	    			["label"] = "Grey Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair28.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair29"] 					= {["name"] = "chair29",  	    			["label"] = "Blue Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair29.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair30"] 					= {["name"] = "chair30",  	    			["label"] = "Light Grey Office Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair30.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair31"] 					= {["name"] = "chair31",  	    			["label"] = "Black Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair31.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair32"] 					= {["name"] = "chair32",  	    			["label"] = "Luxury Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair32.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair33"] 					= {["name"] = "chair33",  	    			["label"] = "Black Comfy Office Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair33.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair34"] 					= {["name"] = "chair34",  	    			["label"] = "Red Office Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair34.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair35"] 					= {["name"] = "chair35",  	    			["label"] = "Ergonomic Office Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair35.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair36"] 					= {["name"] = "chair36",  	    			["label"] = "Comfy Ergonomic Office Chair",["weight"] = 100, 	["type"] = "item", 		["image"] = "chair36.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair37"] 					= {["name"] = "chair37",  	    			["label"] = "Dark Brown Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair37.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair38"] 					= {["name"] = "chair38",  	    			["label"] = "Ol' Rocking Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair38.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair39"] 					= {["name"] = "chair39",  	    			["label"] = "Striped Wicker Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair39.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair40"] 					= {["name"] = "chair40",  	    			["label"] = "Grey Leather Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair40.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair41"] 					= {["name"] = "chair41",  	    			["label"] = "Grey Metal Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair41.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair42"] 					= {["name"] = "chair42",  	    			["label"] = "Brown Metal Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair42.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair43"] 					= {["name"] = "chair43",  	    			["label"] = "Wicker Lawn Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair43.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair44"] 					= {["name"] = "chair44",  	    			["label"] = "Old Posh Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair44.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair45"] 					= {["name"] = "chair45",  	    			["label"] = "Dark Brown Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair45.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair46"] 					= {["name"] = "chair46",  	    			["label"] = "White Dining Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair46.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair47"] 					= {["name"] = "chair47",  	    			["label"] = "Black Wicker Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair47.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair48"] 					= {["name"] = "chair48",  	    			["label"] = "Brown Metal Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair48.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair49"] 					= {["name"] = "chair49",  	    			["label"] = "Brown Wodd Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair49.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair50"] 					= {["name"] = "chair50",  	    			["label"] = "Plastic Lawn Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair50.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair51"] 					= {["name"] = "chair51",  	    			["label"] = "Green Lawn Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair51.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair52"] 					= {["name"] = "chair52",  	    			["label"] = "Worn Metal Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair52.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair53"] 					= {["name"] = "chair53",  	    			["label"] = "Fancy Garden Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair53.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair54"] 					= {["name"] = "chair54",  	    			["label"] = "Old Wooden Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair54.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair55"] 					= {["name"] = "chair55",  	    			["label"] = "Old Metal ",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair55.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair56"] 					= {["name"] = "chair56",  	    			["label"] = "Old Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair56.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair57"] 					= {["name"] = "chair57",  	    			["label"] = "Purple Leather Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair57.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair58"] 					= {["name"] = "chair58",  	    			["label"] = "Zebra Print Couch",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair58.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair59"] 					= {["name"] = "chair59",  	    			["label"] = "Lime Chair",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair59.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair60"] 					= {["name"] = "chair60",  	    			["label"] = "Brown Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair60.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair61"] 					= {["name"] = "chair61",  	    			["label"] = "Cream Chair",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair61.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair62"] 					= {["name"] = "chair62",  	    			["label"] = "Green Camping Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair62.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair63"] 					= {["name"] = "chair63",  	    			["label"] = "Blue Camping Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair63.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair64"] 					= {["name"] = "chair64",  	    			["label"] = "Striped Camping Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair64.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair65"] 					= {["name"] = "chair65",  	    			["label"] = "Posh Lounger",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair65.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair66"] 					= {["name"] = "chair66",  	    			["label"] = "Yellow Wicker Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair66.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair67"] 					= {["name"] = "chair67",  	    			["label"] = "White Metal Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair67.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair68"] 					= {["name"] = "chair68",  	    			["label"] = "White Metal Dining Chair 2",["weight"] = 100, 		["type"] = "item", 		["image"] = "chair68.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair69"] 					= {["name"] = "chair69",  	    			["label"] = "Dark Material Dining Chair",["weight"] = 100, 		["type"] = "item", 		["image"] = "chair69.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair70"] 					= {["name"] = "chair70",  	    			["label"] = "Dark Brown Metal Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair70.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair71"] 					= {["name"] = "chair71",  	    			["label"] = "Brown Lounger",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair71.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair72"] 					= {["name"] = "chair72",  	    			["label"] = "Grey Sun Lounger",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair72.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair73"] 					= {["name"] = "chair73",  	    			["label"] = "Dark Brown Wood Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair73.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair74"] 					= {["name"] = "chair74",  	    			["label"] = "Yellow Deco Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair74.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair75"] 					= {["name"] = "chair75",  	    			["label"] = "Oak Chair",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair75.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair76"] 					= {["name"] = "chair76",  	    			["label"] = "Black Deco Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair76.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair77"] 					= {["name"] = "chair77",  	    			["label"] = "Yellow Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair77.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair78"] 					= {["name"] = "chair78",  	    			["label"] = "Wine Red Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair78.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair79"] 					= {["name"] = "chair79",  	    			["label"] = "Black Office Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair79.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair80"] 					= {["name"] = "chair80",  	    			["label"] = "Orange Louncher",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair80.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair81"] 					= {["name"] = "chair81",  	    			["label"] = "Blue Deco Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair81.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair82"] 					= {["name"] = "chair82",  	    			["label"] = "Small Black Stool",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair82.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair83"] 					= {["name"] = "chair83",  	    			["label"] = "Orange Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair83.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair84"] 					= {["name"] = "chair84",  	    			["label"] = "Orange Deco Couch",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair84.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair85"] 					= {["name"] = "chair85",  	    			["label"] = "Wine Red Couch",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair85.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair86"] 					= {["name"] = "chair86",  	    			["label"] = "Red Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair86.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair87"] 					= {["name"] = "chair87",  	    			["label"] = "White Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair87.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair88"] 					= {["name"] = "chair88",  	    			["label"] = "Black Deco Couch",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair88.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair89"] 					= {["name"] = "chair89",  	    			["label"] = "Light Blue Couch",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair89.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair90"] 					= {["name"] = "chair90",  	    			["label"] = "White Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair90.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair91"] 					= {["name"] = "chair91",  	    			["label"] = "White Leather Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair91.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair92"] 					= {["name"] = "chair92",  	    			["label"] = "Brown Couch",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair92.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair93"] 					= {["name"] = "chair93",  	    			["label"] = "Brown Luxury Office Chair",["weight"] = 100, 		["type"] = "item", 		["image"] = "chair93.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair94"] 					= {["name"] = "chair94",  	    			["label"] = "Grey Luxury Office Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair94.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair95"] 					= {["name"] = "chair95",  	    			["label"] = "Dark Brown Couch",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair95.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair96"] 					= {["name"] = "chair96",  	    			["label"] = "Light Brown Metal Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair96.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair97"]						= {["name"] = "chair97",  	    			["label"] = "Plastic Lawn Chair 2",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair97.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair98"]						= {["name"] = "chair98",  	    			["label"] = "Red/Green Gamer Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair98.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair99"]						= {["name"] = "chair99",  	    			["label"] = "Gamer Chair",				["weight"] = 100, 		["type"] = "item", 		["image"] = "chair99.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair100"] 					= {["name"] = "chair100",  	    			["label"] = "Blue Metal Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair100.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair101"] 					= {["name"] = "chair101",  	    			["label"] = "Black Deco Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair101.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair102"] 					= {["name"] = "chair102",  	    			["label"] = "Red Deco Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair102.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair103"] 					= {["name"] = "chair103",  	    			["label"] = "Green Metal Dining Chair", ["weight"] = 100, 		["type"] = "item", 		["image"] = "chair103.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair104"] 					= {["name"] = "chair104",  	    			["label"] = "Blue Metal Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair104.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair105"] 					= {["name"] = "chair105",  	    			["label"] = "Light Material Dining Chair",["weight"] = 100, 	["type"] = "item", 		["image"] = "chair105.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair106"] 					= {["name"] = "chair106",  	    			["label"] = "Purple Deco Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair106.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair107"] 					= {["name"] = "chair107",  	    			["label"] = "Red Deco Chair",			["weight"] = 100, 		["type"] = "item", 		["image"] = "chair107.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair108"] 					= {["name"] = "chair108",  	    			["label"] = "White Casino Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair108.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair109"] 					= {["name"] = "chair109",  	    			["label"] = "Cream Wicker Chair",		["weight"] = 100, 		["type"] = "item", 		["image"] = "chair109.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-	["chair110"] 					= {["name"] = "chair110",  	    			["label"] = "Black Metal Dining Chair",	["weight"] = 100, 		["type"] = "item", 		["image"] = "chair110.png", 	["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = "" },
-```
+AddEventHandler('onResourceStop', function(resource) if resource ~= GetCurrentResourceName() then return end
+	for k in pairs(Targets) do exports['qb-target']:RemoveZone(k) end
+	for k in pairs(Peds) do unloadModel(GetEntityModel(Peds[k])) DeletePed(Peds[k]) end
+	FreezeEntityPosition(PlayerPedId(),false)
+	removeattachedChair()
+	ClearPedTasks(PlayerPedId())
+end)
