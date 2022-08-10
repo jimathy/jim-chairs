@@ -1,4 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+RegisterNetEvent('QBCore:Client:UpdateObject', function() QBCore = exports['qb-core']:GetCoreObject() end)
 local Targets = {}
 local Peds = {}
 local Blips = {}
@@ -195,7 +196,7 @@ RegisterNetEvent("jim-chairs:Use", function(item)
 		--MPTUNER
 		elseif item == "chair110" then attachAChair(`tr_prop_tr_chair_01a`, 0, -0.1, 0.02, 9.4, -1.4, 185.0) end
 		loadAnimDict(dict)
-		TaskPlayAnim(PlayerPedId(), dict, anim, 1.0, 4.0, GetAnimDuration(dict, anim), 1, 0, 0, 0, 0)
+		TaskPlayAnim(PlayerPedId(), dict, anim, 2.0, 4.0, GetAnimDuration(dict, anim), 1, 0, 0, 0, 0)
 	else
 		haschairalready = false
 		FreezeEntityPosition(PlayerPedId(),false)
