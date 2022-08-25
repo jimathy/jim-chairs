@@ -1,63 +1,39 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 RegisterNetEvent('QBCore:Client:UpdateObject', function() QBCore = exports['qb-core']:GetCoreObject() end)
+
 local Targets = {}
 local Peds = {}
 local Blips = {}
 local attachedChair = nil
 
---Custom Events
-function loadAnimDict(dict) if Config.Debug then print("Debug: Loading Anim Dictionary: '"..dict.."'") end while not HasAnimDictLoaded(dict) do RequestAnimDict(dict) Wait(0) end end
-function unloadAnimDict(dict) if Config.Debug then print("Debug: Removing Anim Dictionary: '"..dict.."'") end RemoveAnimDict(dict) end
-function loadModel(model) if Config.Debug then print("Debug: Loading Model: '"..model.."'") end RequestModel(model) while not HasModelLoaded(model) do Wait(0) end end
-function unloadModel(model) if Config.Debug then print("Debug: Removing Model: '"..model.."'") end SetModelAsNoLongerNeeded(model) end
-function destroyProp(entity) if Config.Debug then print("Debug: Destroying Prop: '"..entity.."'") end SetModelAsNoLongerNeeded(GetEntityModel(entity)) SetEntityAsMissionEntity(entity) Wait(5) DetachEntity(entity, true, true) Wait(5) DeleteObject(entity) end
-function conVector3(vector4) return vector3(vector4.x, vector4.y, vector4.z) end
-
 CreateThread(function()
 	if Config.MakeStores then
 		for k, v in pairs(Config.Stores) do
-			if Config.Debug then print("Creating Ped for store: ['"..v.label.."']") end
-			loadModel(v.info.ped.model)
-			Peds[#Peds+1] = CreatePed(5, v.info.ped.model, v.info.coords.x, v.info.coords.y, v.info.coords.z-1.03, v.info.coords[4], false, true)
+			Peds[#Peds+1] = makePed(v.info.ped.model, v.info.coords, 1, 1)
 			SetEntityInvincible(Peds[#Peds], true)
 			SetBlockingOfNonTemporaryEvents(Peds[#Peds], true)
-			FreezeEntityPosition(Peds[#Peds], true)
-
-			if v.info.showBlip then
-				if Config.Debug then print("Creating Map Blip for store: ['"..v.label.."']") end
-				Blips[#Blips+1] = AddBlipForCoord(v.info.coords)
-				SetBlipAsShortRange(Blips[#Blips], true)
-				SetBlipSprite(Blips[#Blips], 478)
-				SetBlipColour(Blips[#Blips], 81)
-				SetBlipScale(Blips[#Blips], 0.7)
-				SetBlipDisplay(Blips[#Blips], 6)
-				BeginTextCommandSetBlipName('STRING')
-				AddTextComponentString("Chair Store")
-				EndTextCommandSetBlipName(Blips[#Blips])
-			end
-			if Config.Debug then print("Creating Ped for store: ['"..v.label.."']") end
+			if v.info.showBlip then Blips[#Blips+1] = makeBlip({coords = v.info.coords, sprite = 478, col = 81, name = "Chair Store"}) end
 			Targets["ChairStore"..k] =
-			exports['qb-target']:AddCircleZone("ChairStore"..k, conVector3(v.info.coords), 1.2, { name="ChairStore"..k, debugPoly=Config.Debug, useZ=true, },
-			{ options = { { event = "jim-chairs:openShop", icon = "fas fa-chair", label = "Browse Store", store = v }, },
-				distance = 2.0
-			})
+				exports['qb-target']:AddCircleZone("ChairStore"..k, v.info.coords.xyz, 1.2, { name="ChairStore"..k, debugPoly=Config.Debug, useZ=true, },
+				{ options = { { event = "jim-chairs:openShop", icon = "fas fa-chair", label = "Browse Store", store = v, ped = Peds[#Peds] }, },
+					distance = 2.0
+				})
 		end
 	end
 end)
 
 --Chair Store Opening
 RegisterNetEvent('jim-chairs:openShop', function(data)
+	lookEnt(data.ped)
 	if Config.JimShops then	TriggerServerEvent("jim-shops:ShopOpen", "shop", "Chairs", data.store)
-	else TriggerServerEvent("inventory:server:OpenInventory", "shop", "Chairs", data.store)
-	end
+	else TriggerServerEvent("inventory:server:OpenInventory", "shop", "Chairs", data.store)	end
 end)
-
 
 --CHAIR CONTROLLERS
 function attachAChair(chairModel, x, y, z, xR, yR, zR)
 	removeattachedChair()
-	loadModel(chairModel)
-	attachedChair = CreateObject(chairModel, 1.0, 1.0, 1.0, 1, 1, 0)
+	attachedChair = makeProp({prop = chairModel, coords = vector4(0.0,0.0,0.0,0.0)}, 1, 1)
+	Wait(400)
 	AttachEntityToEntity(attachedChair, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 0), x, y, z, xR, yR, zR, 1, 1, 0, 0, 2, 1)
 end
 function removeattachedChair()
@@ -68,15 +44,15 @@ function removeattachedChair()
 	end
 end
 RegisterNetEvent("jim-chairs:Use", function(item)
-	if IsPedInAnyVehicle(PlayerPedId(), false) then TriggerEvent("QBCore:Notify", "You can't use this while in a car", "error") return end
+	if IsPedInAnyVehicle(PlayerPedId(), false) then triggerNotify(nil, "You can't use this while in a car", "error") return end
 	local dict = "timetable@ron@ig_3_couch"
 	local anim = "base"
-	if not haschairalready then
-		haschairalready = true
-		if Config.Debug then print("Distance from floor: "..GetEntityHeightAboveGround(PlayerPedId())) end
+	if not haschairalready then haschairalready = true
+		if Config.Debug then print("^5Debug^7: ^2Distance from floor^7: ^6"..GetEntityHeightAboveGround(PlayerPedId())) end
 		if GetEntityHeightAboveGround(PlayerPedId()) >= tonumber(Config.ExploitDistance) then return end
-
 		FreezeEntityPosition(PlayerPedId(), true)
+		loadAnimDict(dict)
+		TaskPlayAnim(PlayerPedId(), dict, anim, 2.0, 4.0, GetAnimDuration(dict, anim), 1, 0, 0, 0, 0)
 		if item == "chair1" then attachAChair(`v_corp_bk_chair1`, 0, -0.2, -0.22, 8.4, -0.2, 190.0)
 		elseif item == "chair2" then attachAChair(`v_corp_bk_chair2`, 0, 0.0, -0.12, 5.4, 0.4, 190.0)
 		elseif item == "chair3" then attachAChair(`v_corp_lazychair`, 0, -0.1, -0.55, 12.4, 0.4, 190.0)
@@ -195,8 +171,6 @@ RegisterNetEvent("jim-chairs:Use", function(item)
 		elseif item == "chair109" then attachAChair(`h4_prop_h4_chair_01a`, 0, -0.15, -0.02, 9.4, -1.4, 185.0)
 		--MPTUNER
 		elseif item == "chair110" then attachAChair(`tr_prop_tr_chair_01a`, 0, -0.1, 0.02, 9.4, -1.4, 185.0) end
-		loadAnimDict(dict)
-		TaskPlayAnim(PlayerPedId(), dict, anim, 2.0, 4.0, GetAnimDuration(dict, anim), 1, 0, 0, 0, 0)
 	else
 		haschairalready = false
 		FreezeEntityPosition(PlayerPedId(),false)
@@ -220,6 +194,7 @@ end)
 AddEventHandler('onResourceStop', function(resource) if resource ~= GetCurrentResourceName() then return end
 	for k in pairs(Targets) do exports['qb-target']:RemoveZone(k) end
 	for k in pairs(Peds) do unloadModel(GetEntityModel(Peds[k])) DeletePed(Peds[k]) end
+	DeleteEntity(attachedChair)
 	FreezeEntityPosition(PlayerPedId(),false)
 	removeattachedChair()
 	ClearPedTasks(PlayerPedId())

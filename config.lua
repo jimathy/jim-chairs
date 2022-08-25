@@ -1,4 +1,4 @@
-print("^2Jim^7-^2Chairs ^7v^41^7.^42 ^7- ^2Portable Chair Script by Jimathy^7")
+print("^2Jim^7-^2Chairs ^7v^41^7.^43 ^7- ^2Portable Chair Script by Jimathy^7")
 
 -- Did I do a good job? Consider donating as this took me a long time to make for free.
 
@@ -9,6 +9,7 @@ print("^2Jim^7-^2Chairs ^7v^41^7.^42 ^7- ^2Portable Chair Script by Jimathy^7")
 Config = {
 	Debug = false, 	 -- Enable this to help debug the script
 	JimShops = false, -- Set to true if using jim-shops
+	Notify = "qb",
 
 	ExploitDistance = 1.2,  -- Default '1.2'.
 							-- This is how close the person needs to be to the floor so they can use chairs

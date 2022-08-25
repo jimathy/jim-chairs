@@ -43,8 +43,6 @@ ensure [jim]
 - Navigate to `[qb] > qb-inventory > html > images` and place them here
 
 ## Items
-- **THIS SCRIPT SUPPORTS QB-CORES ABILITY TO ADD ITEMS WITH A SCRIPT**
-	- If you have an updated core, you don't need to add these to the items.lua
 - Navigate to `[qb] > qb-core > shared > items.lua`
 - Place these items under the `QBShared.Items` section
 
