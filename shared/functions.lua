@@ -97,5 +97,3 @@ function triggerNotify(title, message, type, src)
 		else TriggerClientEvent("rr_uilib:Notify", src, {msg = message, type = type, style = "dark", duration = 6000, position = "top-right", }) end
 	end
 end
-
-function toggleItem(give, item, amount)	TriggerServerEvent("jim-vanillaunicorn:server:toggleItem", give, item, amount) end
