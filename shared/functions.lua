@@ -14,7 +14,6 @@ function unloadAnimDict(dict) if Config.Debug then print("^5Debug^7: ^2Removing 
 function loadPtfxDict(dict)	if not HasNamedPtfxAssetLoaded(dict) then if Config.Debug then print("^5Debug^7: ^2Loading Ptfx Dictionary^7: '^6"..dict.."^7'") end while not HasNamedPtfxAssetLoaded(dict) do RequestNamedPtfxAsset(dict) Wait(5) end end end
 function unloadPtfxDict(dict) if Config.Debug then print("^5Debug^7: ^2Removing Ptfx Dictionary^7: '^6"..dict.."^7'") end RemoveNamedPtfxAsset(dict) end
 
-
 function destroyProp(entity)
 	if Config.Debug then print("^5Debug^7: ^2Destroying Prop^7: '^6"..entity.."^7'") end
 	SetEntityAsMissionEntity(entity) Wait(5)
@@ -24,10 +23,13 @@ end
 
 function makeProp(data, freeze, synced)
     loadModel(data.prop)
-    local prop = CreateObject(data.prop, data.coords.x, data.coords.y, data.coords.z-1.03, synced or 0, synced or 0, 0)
+    local prop = CreateObject(data.prop, data.coords.x, data.coords.y, data.coords.z-1.03, synced or false, synced or false, false)
     SetEntityHeading(prop, data.coords.w)
     FreezeEntityPosition(prop, freeze or 0)
-    if Config.Debug then print("^5Debug^7: ^6Prop ^2Created ^7: '^6"..prop.."^7'") end
+	if Config.Debug then
+		local coords = { string.format("%.2f", data.coords.x), string.format("%.2f", data.coords.y), string.format("%.2f", data.coords.z), (string.format("%.2f", data.coords.w or 0.0)) }
+		print("^5Debug^7: ^1Prop ^2Created^7: '^6"..prop.."^7' | ^2Hash^7: ^7'^6"..(data.prop).."^7' | ^2Coord^7: ^5vec4^7(^6"..(coords[1]).."^7, ^6"..(coords[2]).."^7, ^6"..(coords[3]).."^7, ^6"..(coords[4]).."^7)")
+	end
     return prop
 end
 
@@ -43,7 +45,10 @@ function makePed(model, coords, freeze, collision, scenario, anim)
         loadAnimDict(anim[1])
         TaskPlayAnim(ped, anim[1], anim[2], 1.0, 1.0, -1, 1, 0.2, 0, 0, 0)
     end
-	if Config.Debug then print("^5Debug^7: ^6Ped ^2Created for location^7: '^6"..model.."^7'") end
+	if Config.Debug then
+		local coords = { string.format("%.2f", coords.x), string.format("%.2f", coords.y), string.format("%.2f", coords.z), (string.format("%.2f", coords.w or 0.0)) }
+		print("^5Debug^7: ^1Ped ^2Created^7: '^6"..ped.."^7' | ^2Hash^7: ^7'^6"..(model).."^7' | ^2Coord^7: ^5vec4^7(^6"..(coords[1]).."^7, ^6"..(coords[2]).."^7, ^6"..(coords[3]).."^7, ^6"..(coords[4]).."^7)")
+	end
     return ped
 end
 
@@ -54,6 +59,7 @@ function makeBlip(data)
 	SetBlipColour(blip, data.col or 0)
 	SetBlipScale(blip, data.scale or 0.7)
 	SetBlipDisplay(blip, (data.disp or 6))
+    if data.category then SetBlipCategory(blip, data.category) end
 	BeginTextCommandSetBlipName('STRING')
 	AddTextComponentString(tostring(data.name))
 	EndTextCommandSetBlipName(blip)
@@ -62,7 +68,7 @@ function makeBlip(data)
 end
 
 function lookEnt(entity)
-	if type(entity) == "vector3" then
+	if type(entity) == "vec3" or "vector3" then
 		if not IsPedHeadingTowardsPosition(PlayerPedId(), entity, 10.0) then
 			TaskTurnPedToFaceCoord(PlayerPedId(), entity, 1500)
 			if Config.Debug then print("^5Debug^7: ^2Turning Player to^7: '^6"..json.encode(entity).."^7'") end
@@ -95,5 +101,27 @@ function triggerNotify(title, message, type, src)
 	elseif Config.Notify == "rr" then
 		if not src then exports.rr_uilib:Notify({msg = message, type = type, style = "dark", duration = 6000, position = "top-right", })
 		else TriggerClientEvent("rr_uilib:Notify", src, {msg = message, type = type, style = "dark", duration = 6000, position = "top-right", }) end
+	elseif Config.Notify == "ox" then
+		if not src then	exports.ox_lib:notify({title = title, description = message, type = type or "success"})
+		else exports.ox_lib:notify({title = title, description = message, type = type or "success"}) end
 	end
+end
+
+if Config.Inv == "ox" then
+	function HasItem(items, amount)
+        if exports.ox_inventory:Search('count', items) >= amount then if Config.Debug then print("^5Debug^7: ^3HasItem^7: ^5FOUND^7 ^3"..count.."^7/^3"..amount.." "..tostring(items)) end return true
+        else if Config.Debug then print("^5Debug^7: ^3HasItem^7: ^2"..tostring(items).." ^1NOT FOUND^7") end return false end
+	end
+else
+    function HasItem(items, amount)
+        local amount, count = amount or 1,  0
+        for _, itemData in pairs(QBCore.Functions.GetPlayerData().items) do
+            if itemData and (itemData.name == items) then
+                if Config.Debug then print("^5Debug^7: ^3HasItem^7: ^2Item^7: '^3"..tostring(items).."^7' ^2Slot^7: ^3"..itemData.slot.." ^7x(^3"..tostring(itemData.amount).."^7)") end
+                count += (itemData.amount or 1)
+            end
+        end
+        if count >= amount then if Config.Debug then print("^5Debug^7: ^3HasItem^7: ^2Items ^5FOUND^7 x^3"..count.."^7") end return true
+        else if Config.Debug then print("^5Debug^7: ^3HasItem^7: ^2Items ^1NOT FOUND^7") end return false end
+    end
 end

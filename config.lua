@@ -1,4 +1,4 @@
-print("^2Jim^7-^2Chairs ^7v^41^7.^43 ^7- ^2Portable Chair Script by Jimathy^7")
+print("^2Jim^7-^2Chairs ^7v^41^7.^44 ^7- ^2Portable Chair Script by Jimathy^7")
 
 -- Did I do a good job? Consider donating as this took me a long time to make for free.
 
@@ -8,7 +8,11 @@ print("^2Jim^7-^2Chairs ^7v^41^7.^43 ^7- ^2Portable Chair Script by Jimathy^7")
 
 Config = {
 	Debug = false, 	 -- Enable this to help debug the script
+
 	JimShops = false, -- Set to true if using jim-shops
+
+	Core = "qb-core",
+	Inv = "qb",
 	Notify = "qb",
 
 	ExploitDistance = 1.2,  -- Default '1.2'.
@@ -48,7 +52,7 @@ Config = {
 				{ name = "chair110", price = 0, amount = 50, info = {}, type = "item", slot = 25, },
 			},
 			info = {
-				coords = vector4(2746.19, 3469.28, 55.67, 243.34),
+				coords = vec4(2746.19, 3469.28, 55.67, 243.34),
 				showBlip = true,
 				ped = {
 					model = `S_M_Y_Construct_01`,
@@ -97,7 +101,7 @@ Config = {
 				{ name = "chair108", price = 0, amount = 50, info = {}, type = "item", slot = 36, },
 			},
 			info = {
-				coords = vector4(194.77, -1291.15, 29.32, 245.95),
+				coords = vec4(194.77, -1291.15, 29.32, 245.95),
 				showBlip = true,
 				ped = {
 					model = `S_M_Y_Construct_01`,
@@ -134,7 +138,7 @@ Config = {
 				{ name = "chair100", price = 0, amount = 50, info = {}, type = "item", slot = 24, },
 			},
 			info = {
-				coords = vector4(-490.19, 28.06, 46.3, 172.08),
+				coords = vec4(-490.19, 28.06, 46.3, 172.08),
 				showBlip = true,
 				ped = {
 					model = `S_M_Y_Construct_01`,
@@ -163,7 +167,7 @@ Config = {
 				{ name = "chair72", price = 0, amount = 50, info = {}, type = "item", slot = 16, },
 			},
 			info = {
-				coords = vector4(-39.55, 6471.5, 31.5, 45.78),
+				coords = vec4(-39.55, 6471.5, 31.5, 45.78),
 				showBlip = true,
 				ped = {
 					model = `S_M_Y_Construct_01`,
@@ -185,7 +189,7 @@ Config = {
 				{ name = "chair56", price = 0, amount = 50, info = {}, type = "item", slot = 9, },
 			},
 			info = {
-				coords = vector4(1540.47, 3703.03, 34.54, 11.25),
+				coords = vec4(1540.47, 3703.03, 34.54, 11.25),
 				showBlip = true,
 				ped = {
 					model = `S_M_Y_Construct_01`,
