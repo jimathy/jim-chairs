@@ -1,6 +1,6 @@
 name "Jim-Chairs"
 author "Jimathy"
-version "1.3"
+version "1.4"
 description "Jim-Chairs By Jimathy"
 fx_version "cerulean"
 game "gta5"
