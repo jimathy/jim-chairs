@@ -1,3 +1,5 @@
+local QBCore = exports[Config.Core]:GetCoreObject()
+
 local time = 1000
 function loadModel(model) if not HasModelLoaded(model) then
 	if Config.Debug then print("^5Debug^7: ^2Loading Model^7: '^6"..model.."^7'") end
