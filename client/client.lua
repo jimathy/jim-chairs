@@ -41,7 +41,7 @@ function removeattachedChair()
 end
 RegisterNetEvent("jim-chairs:Use", function(item)
 	if not HasItem(item) then return end
-	local dict, base, ped = "timetable@ron@ig_3_couch", "base", PlayerPedID()
+	local dict, base, ped = "timetable@ron@ig_3_couch", "base", PlayerPedId()
 	if IsPedInAnyVehicle(ped, false) then triggerNotify(nil, "You can't use this while in a car", "error") return end
 	if not haschairalready then haschairalready = true
 		if Config.Debug then print("^5Debug^7: ^2Distance from floor^7: ^6"..GetEntityHeightAboveGround(ped)) end
