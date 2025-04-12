@@ -23,7 +23,7 @@ onPlayerLoaded(function()
 						openShop({ shop = "ChairStore_"..v.label, items = v, coords = v.info.coords.xyz })
 					end,
 					icon = "fas fa-chair",
-					label = "Browse Store",
+					label = locale("targets", "browse"),
 				},
 			}, 2.0)
 		end
@@ -39,7 +39,7 @@ RegisterNetEvent(getScript()..":client:Use", function(data)
 	end
 	local dict, anim = "timetable@ron@ig_3_couch", "base"
 	if IsPedInAnyVehicle(ped, false) then
-		triggerNotify(nil, "You can't use this while in a car", "error")
+		triggerNotify(nil, locale("notify", "carCant"), "error")
 		return
 	end
 	if not haschairalready then

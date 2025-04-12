@@ -1,5 +1,5 @@
 Stores = {
-    {	label = "Dining Chair Store",
+    {	label = locale("stores", "diningStore"),
         slots = 25,
         items = {
             { name = "chair70", price = 0, amount = 50, info = {}, type = "item", slot = 1, },
@@ -37,7 +37,7 @@ Stores = {
             },
         },
     },
-    {	label = "House Chair Store",
+    {	label = locale("stores", "houseStore"),
         slots = 36,
         items = {
             { name = "chair71", price = 0, amount = 50, info = {}, type = "item", slot = 1, },
@@ -86,7 +86,7 @@ Stores = {
             },
         },
     },
-    {	label = "Office Chair Store",
+    {	label = locale("stores", "officeStore"),
         slots = 16,
         items = {
             { name = "chair25", price = 0, amount = 50, info = {}, type = "item", slot = 1, },
@@ -123,7 +123,7 @@ Stores = {
             },
         },
     },
-    {	label = "Outdoor Chair Store",
+    {	label = locale("stores", "outdoorStore"),
         slots = 16,
         items = {
             { name = "chair62", price = 0, amount = 50, info = {}, type = "item", slot = 1, },
@@ -152,7 +152,7 @@ Stores = {
             },
         },
     },
-    {	label = "Used Chair Store",
+    {	label = locale("stores", "usedStore"),
         slots = 9,
         items = {
             { name = "chair4", price = 0, amount = 50, info = {}, type = "item", slot = 1, },

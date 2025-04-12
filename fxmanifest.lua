@@ -9,6 +9,7 @@ lua54 'yes'
 server_script '@oxmysql/lib/MySQL.lua'
 
 shared_scripts {
+    'locales/*.lua',
     'config.lua',
 
     -- Required core scripts
