@@ -15,7 +15,7 @@ onPlayerLoaded(function()
 			createCircleTarget( { "ChairStore"..k, v.info.coords.xyz, 1.2,
 					{
 						name = "ChairStore"..k,
-						debugPoly = true,
+						debugPoly = debugMode,
 					},
 				}, {
 				{

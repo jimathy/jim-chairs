@@ -5,6 +5,7 @@
 
 
 Config = {
+	Lan = "en",
 	System = {
 		Debug = false, 	 -- Enable this to help debug the script
 		Notify = "gta",
