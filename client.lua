@@ -32,7 +32,8 @@ end, true)
 
 --CHAIR CONTROLLERS
 RegisterNetEvent(getScript()..":client:Use", function(data)
-	local item = type(data) == "table" and data.item or data
+	jsonPrint(data)
+	local item = type(data) == "table" and data.client.item or data
 	local ped = PlayerPedId()
 	if not hasItem("chair"..item, 1) then
 		return
