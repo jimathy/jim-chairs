@@ -1,1 +1,7 @@
-2.0.01
+2.0.02
+
+- Update Readme.md to direct to gitbook
+- Optimize Icon images
+- Make use of jim_bridge's new shop exploit protection
+
+https://github.com/jimathy/jim-chairs

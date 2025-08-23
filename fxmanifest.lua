@@ -1,6 +1,6 @@
 name "Jim-Chairs"
 author "Jimathy"
-version "2.0.01"
+version "2.0.02"
 description "Portable Chair Item Script"
 fx_version "cerulean"
 game "gta5"
